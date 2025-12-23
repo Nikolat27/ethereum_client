@@ -20,38 +20,37 @@ class EthService {
         this.client = new JsonRpcProvider(rpcUrl);
     }
 
-    setProvider(rpcUrl: string) {
+    public setProvider(rpcUrl: string): void {
         this.client = new JsonRpcProvider(rpcUrl);
     }
 
-    getTx(hash: string): Promise<null | TransactionResponse> {
+    public getTx(hash: string): Promise<null | TransactionResponse> {
         return this.client.getTransaction(hash);
     }
 
-    getTxReceipt(hash: string): Promise<null | TransactionReceipt> {
+    public getTxReceipt(hash: string): Promise<null | TransactionReceipt> {
         return this.client.getTransactionReceipt(hash);
     }
 
-    getBlockNumber(): Promise<number> {
+    public getBlockNumber(): Promise<number> {
         return this.client.getBlockNumber();
     }
 
-    getBalance(address: string): Promise<bigint> {
+    public getBalance(address: string): Promise<bigint> {
         return this.client.getBalance(address);
     }
 
-    getBlock(blockNumber: number | "latest"): Promise<null | Block> {
+    public getBlock(blockNumber: number | "latest"): Promise<null | Block> {
         return this.client.getBlock(blockNumber);
     }
 
-    getFeeData(): Promise<FeeData> {
+    public getFeeData(): Promise<FeeData> {
         return this.client.getFeeData();
     }
 
-    estimateGas(tx: TransactionRequest): Promise<bigint> {
+    public estimateGas(tx: TransactionRequest): Promise<bigint> {
         return this.client.estimateGas(tx);
     }
-
 }
 
 export const ethService = new EthService(RPC_URL);
