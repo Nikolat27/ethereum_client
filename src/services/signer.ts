@@ -1,6 +1,6 @@
 import { Wallet } from "ethers";
 import type { Signer } from "ethers";
-import { validatePrivateKey } from "../utils/services";
+import { validatePrivateKey } from "../utils/validators";
 import type { WalletType } from "../types/types";
 
 class SignerService {
