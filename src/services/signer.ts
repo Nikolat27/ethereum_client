@@ -1,5 +1,7 @@
-import { Wallet, isHexString, Mnemonic } from "ethers";
+import { Wallet } from "ethers";
 import type { Signer } from "ethers";
+import { validatePrivateKey } from "../utils/services";
+import type { WalletType } from "../types/types";
 
 class SignerService {
     // This contains both private key and mnemonic wallet
@@ -9,7 +11,7 @@ class SignerService {
 
     public importWallet(
         input: string,
-        walletType: "private-key" | "mnemonic",
+        walletType: WalletType,
     ): Signer {
         return walletType === "private-key"
             ? this.importWalletFromPrivateKey(input)
@@ -17,22 +19,12 @@ class SignerService {
     }
 
     private importWalletFromPrivateKey(privateKey: string): Signer {
-        if (!privateKey.startsWith("0x")) {
-            throw new Error("private key must start with 0x");
-        }
-
-        if (!isHexString(privateKey, 32)) {
-            throw new Error("invalid private key");
-        }
+        validatePrivateKey(privateKey);
 
         return new Wallet(privateKey);
     }
 
     private importWalletFromMnemonic(mnemonic: string): Signer {
-        if (!Mnemonic.isValidMnemonic(mnemonic)) {
-            throw new Error("invalid mnemonic phrase");
-        }
-
         return Wallet.fromPhrase(mnemonic);
     }
 }
