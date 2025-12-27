@@ -9,6 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { IoDocumentSharp } from "react-icons/io5";
 import { IoMdSettings } from "react-icons/io";
 import { HiOutlineMenu } from "react-icons/hi";
+import { Divider } from "@mui/material";
 
 export default function TemporaryDrawer() {
     const [open, setOpen] = React.useState(false);
@@ -18,7 +19,7 @@ export default function TemporaryDrawer() {
     };
 
     const DrawerList = (
-        <Box sx={{ width: 250, bgcolor: "#1e1e1e", color: "white" }} role="presentation" onClick={toggleDrawer(false)}>
+        <Box sx={{ width: 250, color: "white" }} role="presentation" onClick={toggleDrawer(false)}>
             <List>
                 {["Docs", "Settings"].map((text, index) => (
                     <ListItem key={text} disablePadding>
@@ -31,6 +32,7 @@ export default function TemporaryDrawer() {
                     </ListItem>
                 ))}
             </List>
+            <Divider style={{ color: "white" }} />
         </Box>
     );
 
@@ -47,7 +49,7 @@ export default function TemporaryDrawer() {
                 slotProps={{
                     paper: {
                         sx: {
-                            backgroundColor: "#1e1e1e",
+                            backgroundColor: "#1f2937",
                         },
                     },
                 }}

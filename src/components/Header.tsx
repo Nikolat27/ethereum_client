@@ -38,7 +38,6 @@ function Header() {
                 </div>
 
                 
-
                 <TemporaryDrawer />
             </div>
         </header>
