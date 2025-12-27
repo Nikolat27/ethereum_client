@@ -1,6 +1,9 @@
-import NetworkConfiguration from "../components/Main/Network";
-import WalletManagement from "../components/Main/Wallet";
-import TransactionBuilder from "../components/Main/Transaction";
+import { lazy } from "react";
+
+const NetworkConfiguration = lazy(() => import("../components/Main/Network"));
+const WalletManagement = lazy(() => import("../components/Main/Wallet"));
+const TransactionBuilder = lazy(() => import("../components/Main/Transaction"));
+const ContractInteraction = lazy(() => import("../components/Main/Contract"));
 
 export function Main() {
     return (
@@ -8,6 +11,7 @@ export function Main() {
             <NetworkConfiguration />
             <WalletManagement />
             <TransactionBuilder />
+            <ContractInteraction />
         </div>
     );
 }
