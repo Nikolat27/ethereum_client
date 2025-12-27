@@ -4,6 +4,7 @@ const NetworkConfiguration = lazy(() => import("../components/Main/Network"));
 const WalletManagement = lazy(() => import("../components/Main/Wallet"));
 const TransactionBuilder = lazy(() => import("../components/Main/Transaction"));
 const ContractInteraction = lazy(() => import("../components/Main/Contract"));
+const JsonRequest = lazy(() => import("../components/Main/JsonRequest"));
 
 export function Main() {
     return (
@@ -12,6 +13,7 @@ export function Main() {
             <WalletManagement />
             <TransactionBuilder />
             <ContractInteraction />
+            <JsonRequest />
         </div>
     );
 }

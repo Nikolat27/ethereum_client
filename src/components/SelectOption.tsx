@@ -1,12 +1,12 @@
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { type SelectChangeEvent } from "@mui/material";
-import type { NetworkItemsList, NetworkItem } from "../types/types";
+import type { SelectItemsList, SelectItem } from "../types/types";
 
 interface Props {
     label: string;
     value: string;
     onChange: (event: SelectChangeEvent) => void;
-    itemsList: NetworkItemsList;
+    itemsList: SelectItemsList;
 }
 
 function SelectOption({ label = "Network", value, onChange, itemsList }: Props) {
@@ -45,7 +45,7 @@ function SelectOption({ label = "Network", value, onChange, itemsList }: Props) 
                 label={label}
                 onChange={onChange}
             >
-                {itemsList.map((item: NetworkItem) => (
+                {itemsList.map((item: SelectItem) => (
                     <MenuItem value={item.value} className="text-white">
                         {item.text}
                     </MenuItem>

@@ -59,14 +59,16 @@ function TransactionBuilder() {
                 <div className="flex flex-row w-full text-white font-medium gap-4">
                     <div
                         className="flex flex-1 h-13 flex-row bg-[#374151] rounded-lg
-                        items-center justify-center cursor-pointer gap-2"
+                        items-center justify-center cursor-pointer gap-2 transition-all
+                        duration-300 hover:bg-gray-500"
                     >
                         <IoIosCalculator size={23} />
                         <span>Estimate Gas</span>
                     </div>
                     <div
                         className="flex flex-1 h-13 flex-row bg-[#2563eb] rounded-lg
-                        items-center justify-center cursor-pointer gap-2"
+                        items-center justify-center cursor-pointer gap-2 transition-all
+                        duration-300 hover:bg-blue-700"
                     >
                         <FaSignature size={23} />
                         <span>Sign & Send</span>
