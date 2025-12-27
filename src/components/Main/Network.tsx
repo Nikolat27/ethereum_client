@@ -8,6 +8,7 @@ function NetworkConfiguration() {
     const [network, setNetwork] = useState<string>("Ethereum Mainnet");
     const [chainId, setChainId] = useState<string>("1");
     const [rpcUrl, setRpcUrl] = useState<string>("");
+    const [connect, setConnect] = useState<boolean>(false);
 
     function handleNetworkChange(event: SelectChangeEvent) {
         setNetwork(event.target.value as string);
@@ -16,6 +17,11 @@ function NetworkConfiguration() {
     async function copyRpcUrlToClipboard() {
         await navigator.clipboard.writeText(rpcUrl);
         console.log("copied successfully");
+    }
+
+    function toggleConnection(value: boolean) {
+        console.log(value);
+        setConnect(value);
     }
 
     return (
@@ -135,6 +141,17 @@ function NetworkConfiguration() {
                 >
                     <IoClipboardSharp size={21} className="text-white" />
                 </div>
+            </div>
+            <div className="flex items-center justify-center w-full">
+                <button
+                    onClick={() => toggleConnection(!connect)}
+                    className="cursor-pointer transition-color duration-300 w-38 h-10 rounded-3xl
+                    hover:bg-green-700 bg-green-600 py-1 px-2 
+                    text-center text-white font-medium"
+                    type="submit"
+                >
+                    {connect ? "Connected" : "Connect"}
+                </button>
             </div>
         </div>
     );
