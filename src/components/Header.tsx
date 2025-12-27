@@ -7,7 +7,7 @@ function Header() {
     return (
         <header
             className="flex flex-row w-full h-14 bg-[#1f2937] sticky px-4 mx-auto
-            top-0 border-b border-gray-700 items-center gap-x-4 justify-start"
+            top-0 border-b border-gray-700 items-center gap-x-4 justify-start z-50"
         >
             <div className="flex flex-row w-auto gap-x-2 h-auto px-3 border-r border-r-gray-600">
                 <FaEthereum color="white" size={30} />
@@ -37,7 +37,6 @@ function Header() {
                     <span>Settings</span>
                 </div>
 
-                
                 <TemporaryDrawer />
             </div>
         </header>

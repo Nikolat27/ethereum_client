@@ -10,7 +10,7 @@ function Sidebar() {
 
     return (
         <aside
-            className="h-full hidden sm:flex w-56 bg-[#1f2937] border-r border-gray-600
+            className="sticky h-full hidden sm:flex w-56 bg-[#1f2937] border-r border-gray-600
              flex-col items-center justify-start px-4 pt-8 gap-y-3"
         >
             <div
