@@ -4,7 +4,7 @@ import { type SelectChangeEvent } from "@mui/material";
 import { IoClipboardSharp } from "react-icons/io5";
 import CustomTextField from "../CustomTextField";
 import SelectOption from "../SelectOption";
-import type { NetworkItemsList } from "../../types/types";
+import type { SelectItemsList } from "../../types/types";
 import toast, { Toaster } from "react-hot-toast";
 
 function NetworkConfiguration() {
@@ -30,7 +30,7 @@ function NetworkConfiguration() {
         setConnect(value);
     }
 
-    const itemsList: NetworkItemsList = [
+    const itemsList: SelectItemsList = [
         { text: "Ethereum Mainnet", value: "ethereum_mainnet" },
         { text: "Sepolia Testnet", value: "sepolia_testnet" },
     ];
@@ -65,7 +65,7 @@ function NetworkConfiguration() {
                     <div
                         onClick={copyRpcUrlToClipboard}
                         className="cursor-pointer w-10 h-10 rounded-full bg-gray-500
-                    flex items-center justify-center"
+                        flex items-center justify-center"
                     >
                         <IoClipboardSharp size={21} className="text-white" />
                     </div>
@@ -74,8 +74,8 @@ function NetworkConfiguration() {
                     <button
                         onClick={() => toggleConnection(!connect)}
                         className="cursor-pointer transition-color duration-300 w-38 h-10 rounded-3xl
-                    hover:bg-green-700 bg-green-600 py-1 px-2 
-                    text-center text-white font-medium"
+                      hover:bg-green-700 bg-green-600 py-1 px-2 
+                        text-center text-white font-medium"
                         type="submit"
                     >
                         {connect ? "Connected" : "Connect"}

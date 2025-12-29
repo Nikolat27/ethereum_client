@@ -9,7 +9,10 @@ const Utilities = lazy(() => import("../components/Main/Utilities"));
 
 export function Main() {
     return (
-        <div className="flex flex-col items-center justify-center w-full h-full px-6 py-12 gap-y-8 bg-[#111827]">
+        <div
+            className="flex flex-col items-center justify-center w-full
+            px-6 py-12 gap-y-8 bg-[#111827]"
+        >
             <NetworkConfiguration />
             <WalletManagement />
             <TransactionBuilder />

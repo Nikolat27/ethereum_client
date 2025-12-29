@@ -4,11 +4,13 @@ import Sidebar from "../components/Sidebar";
 
 export function Main() {
     return (
-        <main className="min-h-screen grid grid-rows-[2.5rem_1fr]">
+        <main className="h-screen grid grid-rows-[2.5rem_1fr]">
             <Header />
-            <div className="flex flex-1 h-full w-full">
+            <div className="flex w-full h-full overflow-hidden">
                 <Sidebar />
-                <Outlet />
+                <div className="flex-1 h-full overflow-y-auto">
+                    <Outlet />
+                </div>
             </div>
         </main>
     );
