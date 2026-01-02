@@ -5,11 +5,13 @@ import { FaFileContract } from "react-icons/fa6";
 import { BiSolidWrench } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
 import { useState } from "react";
+import { useWallet } from "../contexts/WalletContext";
 import { RxCross1 } from "react-icons/rx";
 
 function Sidebar() {
     const [activeTab, setActiveTab] = useState<string>("network");
-    const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false); // Change to false for inactive state
+    const { wallet, walletAddress, balance } = useWallet();
+    const isWalletConnected = wallet !== null;
     const tabActiveStyle: string = "text-[#60A5FA] bg-[#111827]";
     const tabNotActiveStyle: string = "text-[#D1D5DB]";
 
@@ -105,8 +107,10 @@ function Sidebar() {
                 </div>
                 {isWalletConnected ? (
                     <>
-                        <span className="text-gray-400 text-sm">0xdeaf...4fb8b</span>
-                        <span className="text-gray-400 text-sm mt-2">0.0162 ETH</span>
+                        <span className="text-gray-400 text-sm">
+                            {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
+                        </span>
+                        <span className="text-gray-400 text-sm mt-2">{balance} ETH</span>
                     </>
                 ) : (
                     <span className="text-gray-500 text-sm mt-2">Connect a wallet to get started</span>
