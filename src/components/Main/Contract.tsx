@@ -5,11 +5,12 @@ import { AiFillRead } from "react-icons/ai";
 import { RiPencilFill } from "react-icons/ri";
 
 function ContractInteraction() {
+    const sectionId = "contract-section";
     const [address, setAddress] = useState<string>("");
     const [ABI, setABI] = useState<string>("");
 
     return (
-        <div className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
+        <div id={sectionId} className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
             <div className="flex flex-row items-center gap-x-2 mb-6">
                 <FaFileContract size={21} className="text-[#3B82F6]" />
                 <span className="text-white font-medium text-lg">Contract Interaction</span>

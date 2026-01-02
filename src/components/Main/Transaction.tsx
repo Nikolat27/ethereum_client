@@ -6,6 +6,7 @@ import { IoIosCalculator } from "react-icons/io";
 import { FaSignature } from "react-icons/fa";
 
 function TransactionBuilder() {
+    const sectionId = "transaction-section";
     const [from, setFrom] = useState<string>("");
     const [to, setTo] = useState<string>("");
 
@@ -16,7 +17,7 @@ function TransactionBuilder() {
     const [data, setData] = useState<string>("");
 
     return (
-        <div className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
+        <div id={sectionId} className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
             <div className="flex flex-row items-center gap-x-2 mb-6">
                 <FaTelegramPlane size={21} className="text-[#3B82F6]" />
                 <span className="text-white font-medium text-lg">Transaction Builder</span>

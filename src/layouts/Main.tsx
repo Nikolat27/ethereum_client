@@ -8,7 +8,7 @@ export function Main() {
             <Header />
             <div className="flex w-full h-full overflow-hidden">
                 <Sidebar />
-                <div className="flex-1 h-full overflow-y-auto">
+                <div className="flex-1 h-full overflow-y-auto scroll-smooth">
                     <Outlet />
                 </div>
             </div>

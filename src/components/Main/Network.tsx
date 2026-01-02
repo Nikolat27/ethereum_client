@@ -8,6 +8,7 @@ import type { SelectItemsList } from "../../types/types";
 import toast, { Toaster } from "react-hot-toast";
 
 function NetworkConfiguration() {
+    const sectionId = "network-section";
     const [network, setNetwork] = useState<string>("ethereum_mainnet");
     const [chainId, setChainId] = useState<string>("1");
     const [rpcUrl, setRpcUrl] = useState<string>("");
@@ -22,7 +23,7 @@ function NetworkConfiguration() {
 
         toast.success("Copied in your clipboard", {
             duration: 1000,
-            position: 'top-right',
+            position: "top-right",
         });
     }
 
@@ -39,7 +40,10 @@ function NetworkConfiguration() {
         <>
             <Toaster />
 
-            <div className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
+            <div
+                id={sectionId}
+                className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600"
+            >
                 <div className="flex flex-row items-center gap-x-2 mb-6">
                     <FaServer className="text-[#3B82F6]" />
                     <span className="text-white font-medium text-lg">RPC Endpoint</span>

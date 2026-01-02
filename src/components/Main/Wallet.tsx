@@ -6,6 +6,7 @@ import { IoClipboardSharp } from "react-icons/io5";
 import toast, { Toaster } from "react-hot-toast";
 
 function WalletManagement() {
+    const sectionId = "wallet-section";
     async function copyRpcUrlToClipboard(address: string) {
         await navigator.clipboard.writeText(address);
 
@@ -18,7 +19,10 @@ function WalletManagement() {
     return (
         <>
             <Toaster />
-            <div className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600">
+            <div
+                id={sectionId}
+                className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600"
+            >
                 <div className="flex flex-row items-center gap-x-2 mb-6">
                     <FaWallet className="text-[#3B82F6]" />
                     <span className="text-white font-medium text-lg">Wallet Management</span>

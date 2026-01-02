@@ -4,10 +4,28 @@ import { GrTransaction } from "react-icons/gr";
 import { FaFileContract } from "react-icons/fa6";
 import { BiSolidWrench } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
+import { useState } from "react";
 
 function Sidebar() {
+    const [activeTab, setActiveTab] = useState<string>("network");
     const tabActiveStyle: string = "text-[#60A5FA] bg-[#111827]";
     const tabNotActiveStyle: string = "text-[#D1D5DB]";
+
+    const scrollToSection = (sectionId: string, tabName: string) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            setActiveTab(tabName);
+            // Get the scrollable container (the main content area)
+            const scrollContainer = element.closest(".overflow-y-auto");
+            if (scrollContainer) {
+                const elementTop = element.offsetTop;
+                scrollContainer.scrollTo({
+                    top: elementTop - 80,
+                    behavior: "smooth",
+                });
+            }
+        }
+    };
 
     return (
         <aside
@@ -15,7 +33,8 @@ function Sidebar() {
             flex-col items-center justify-start px-4 pt-8 gap-y-3"
         >
             <div
-                className={`${tabActiveStyle}
+                onClick={() => scrollToSection("network-section", "network")}
+                className={`${activeTab === "network" ? tabActiveStyle : tabNotActiveStyle}
                 transition-colors duration-200 hover:bg-gray-700
                 w-[98%] flex flex-row cursor-pointer
                 items-center justify-start gap-x-3 py-2 px-3 rounded-lg`}
@@ -24,7 +43,8 @@ function Sidebar() {
                 <span className="font-medium">Network</span>
             </div>
             <div
-                className={`${tabNotActiveStyle}
+                onClick={() => scrollToSection("wallet-section", "wallet")}
+                className={`${activeTab === "wallet" ? tabActiveStyle : tabNotActiveStyle}
                 transition-colors duration-200 hover:bg-gray-700
                 w-[98%] flex flex-row cursor-pointer
                 items-center justify-start gap-x-3 py-2 px-3 rounded-lg`}
@@ -33,7 +53,8 @@ function Sidebar() {
                 <span className="font-medium">Wallet</span>
             </div>
             <div
-                className={`${tabNotActiveStyle}
+                onClick={() => scrollToSection("transaction-section", "transaction")}
+                className={`${activeTab === "transaction" ? tabActiveStyle : tabNotActiveStyle}
                 transition-colors duration-200 hover:bg-gray-700
                 w-[98%] flex flex-row cursor-pointer
                 items-center justify-start gap-x-3 py-2 px-3 rounded-lg`}
@@ -42,7 +63,8 @@ function Sidebar() {
                 <span className="font-medium">Transaction</span>
             </div>
             <div
-                className={`${tabNotActiveStyle}
+                onClick={() => scrollToSection("contract-section", "contract")}
+                className={`${activeTab === "contract" ? tabActiveStyle : tabNotActiveStyle}
                 transition-colors duration-200 hover:bg-gray-700
                 w-[98%] flex flex-row cursor-pointer
                 items-center justify-start gap-x-3 py-2 px-3 rounded-lg`}
@@ -51,7 +73,8 @@ function Sidebar() {
                 <span className="font-medium">Contract</span>
             </div>
             <div
-                className={`${tabNotActiveStyle}
+                onClick={() => scrollToSection("utilities-section", "utilities")}
+                className={`${activeTab === "utilities" ? tabActiveStyle : tabNotActiveStyle}
                 transition-colors duration-200 hover:bg-gray-700
                 w-[98%] flex flex-row cursor-pointer
                 items-center justify-start gap-x-3 py-2 px-3 rounded-lg`}
@@ -63,7 +86,7 @@ function Sidebar() {
             <div
                 className="w-full h-auto p-3 flex flex-col items-start justify-start
               bg-[#111827] rounded-lg gap-1 border border-gray-500 mt-auto mb-8"
-            >   
+            >
                 <div className="flex flex-row w-full gap-2 items-center justify-center">
                     <span className="text-gray-400 font-medium text-[13px]">ACTIVE WALLET</span>
                     <button className="text-center text-green-500 w-5 h-5 bg-white rounded-full ml-auto">
