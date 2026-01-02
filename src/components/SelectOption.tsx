@@ -39,6 +39,25 @@ function SelectOption({ label = "Network", value, onChange, itemsList }: Props) 
                         color: "#D1D5DB",
                     },
                 }}
+                MenuProps={{
+                    PaperProps: {
+                        sx: {
+                            bgcolor: "#1f2937",
+                            color: "white",
+                            "& .MuiMenuItem-root": {
+                                "&:hover": {
+                                    bgcolor: "#374151",
+                                },
+                                "&.Mui-selected": {
+                                    bgcolor: "#2563eb",
+                                    "&:hover": {
+                                        bgcolor: "#1d4ed8",
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }}
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 value={value}
@@ -46,7 +65,7 @@ function SelectOption({ label = "Network", value, onChange, itemsList }: Props) 
                 onChange={onChange}
             >
                 {itemsList.map((item: SelectItem) => (
-                    <MenuItem value={item.value} className="text-white">
+                    <MenuItem key={item.value} value={item.value} className="text-white">
                         {item.text}
                     </MenuItem>
                 ))}

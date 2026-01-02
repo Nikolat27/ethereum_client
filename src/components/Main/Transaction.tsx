@@ -187,13 +187,6 @@ function TransactionBuilder() {
                     </div>
 
                     <div className="flex flex-row items-center justify-center w-full gap-2">
-                        <CustomTextField
-                            value={walletAddress}
-                            onChange={() => {}}
-                            label="From"
-                            placeholder="0x..."
-                            disabled
-                        />
                         <CustomTextField value={to} onChange={setTo} label="To" placeholder="0x..." />
                     </div>
                     <div className="flex flex-row items-center justify-center w-full gap-2">
