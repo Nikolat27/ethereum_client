@@ -5,9 +5,10 @@ interface Props {
     placeholder: string;
     value: string;
     onChange: (value: string) => void;
+    disabled?: boolean;
 }
 
-function CustomTextField({ label = "label", placeholder = "placeholder", value, onChange }: Props) {
+function CustomTextField({ label = "label", placeholder = "placeholder", value, onChange, disabled = false }: Props) {
     return (
         <TextField
             value={value}
@@ -16,6 +17,7 @@ function CustomTextField({ label = "label", placeholder = "placeholder", value, 
             variant="outlined"
             fullWidth
             placeholder={placeholder}
+            disabled={disabled}
             sx={{
                 "& .MuiInputBase-input": {
                     color: "#D1D5DB", // input text
