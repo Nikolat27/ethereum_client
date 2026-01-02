@@ -5,9 +5,11 @@ import { FaFileContract } from "react-icons/fa6";
 import { BiSolidWrench } from "react-icons/bi";
 import { TiTick } from "react-icons/ti";
 import { useState } from "react";
+import { RxCross1 } from "react-icons/rx";
 
 function Sidebar() {
     const [activeTab, setActiveTab] = useState<string>("network");
+    const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false); // Change to false for inactive state
     const tabActiveStyle: string = "text-[#60A5FA] bg-[#111827]";
     const tabNotActiveStyle: string = "text-[#D1D5DB]";
 
@@ -88,13 +90,27 @@ function Sidebar() {
               bg-[#111827] rounded-lg gap-1 border border-gray-500 mt-auto mb-8"
             >
                 <div className="flex flex-row w-full gap-2 items-center justify-center">
-                    <span className="text-gray-400 font-medium text-[13px]">ACTIVE WALLET</span>
-                    <button className="text-center text-green-500 w-5 h-5 bg-white rounded-full ml-auto">
-                        <TiTick className="ml-0.5" />
-                    </button>
+                    <span className="text-gray-400 font-medium text-[13px]">
+                        {isWalletConnected ? "ACTIVE WALLET" : "NO WALLET"}
+                    </span>
+                    {isWalletConnected ? (
+                        <button className="text-center text-green-500 w-5 h-5 bg-white rounded-full ml-auto">
+                            <TiTick className="ml-0.5" />
+                        </button>
+                    ) : (
+                        <button className="text-center text-red-500 w-5 h-5 bg-white rounded-full ml-auto">
+                            <RxCross1 className="ml-0.5" />
+                        </button>
+                    )}
                 </div>
-                <span className="text-gray-400 text-sm">0xdeaf...4fb8b</span>
-                <span className="text-gray-400 text-sm mt-2">0.0162 ETH</span>
+                {isWalletConnected ? (
+                    <>
+                        <span className="text-gray-400 text-sm">0xdeaf...4fb8b</span>
+                        <span className="text-gray-400 text-sm mt-2">0.0162 ETH</span>
+                    </>
+                ) : (
+                    <span className="text-gray-500 text-sm mt-2">Connect a wallet to get started</span>
+                )}
             </div>
         </aside>
     );
