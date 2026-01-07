@@ -3,7 +3,7 @@ import { FaServer } from "react-icons/fa6";
 import { type SelectChangeEvent } from "@mui/material";
 import { IoClipboardSharp } from "react-icons/io5";
 import CustomTextField from "../CustomTextField";
-import SelectOption from "../SelectOption";
+import SelectOption from "../CustomSelectOption";
 import type { SelectItemsList } from "../../types/types";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -78,7 +78,7 @@ function NetworkConfiguration() {
                     <button
                         onClick={() => toggleConnection(!connect)}
                         className="cursor-pointer transition-color duration-300 w-38 h-10 rounded-3xl
-                      hover:bg-green-700 bg-green-600 py-1 px-2 
+                      hover:bg-green-700 bg-green-600 py-1 px-2
                         text-center text-white font-medium"
                         type="submit"
                     >

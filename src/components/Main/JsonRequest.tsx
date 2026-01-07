@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaCode } from "react-icons/fa";
-import SelectOption from "../SelectOption";
+import SelectOption from "../CustomSelectOption";
 import { type SelectChangeEvent } from "@mui/material";
 import type { SelectItemsList } from "../../types/types";
 import { FaPlay } from "react-icons/fa";
