@@ -4,12 +4,13 @@ import { FiPlus } from "react-icons/fi";
 import { IoKey } from "react-icons/io5";
 import { TiSortAlphabetically } from "react-icons/ti";
 import { IoClipboardSharp } from "react-icons/io5";
-import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import toast, { Toaster } from "react-hot-toast";
 import { signerService } from "../../services/signer";
 import { ethService } from "../../services/provider";
-import { Modal, Box, TextField, Button } from "@mui/material";
 import { useWallet } from "../../contexts/WalletContext";
+import ImportPrivateKeyModal from "../Modals/ImportPrivateKeyModal";
+import ImportMnemonicModal from "../Modals/ImportMnemonicModal";
+import GeneratedWalletModal from "../Modals/GeneratedWalletModal";
 
 function WalletManagement() {
     const sectionId = "wallet-section";
@@ -29,19 +30,6 @@ function WalletManagement() {
     // Visibility states
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [showMnemonic, setShowMnemonic] = useState(false);
-    const modalStyle = {
-        position: "absolute" as const,
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 500,
-        maxWidth: "90%",
-        bgcolor: "#1f2937",
-        border: "1px solid #4b5563",
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2,
-    };
 
     async function generateWallet() {
         try {
@@ -245,180 +233,37 @@ function WalletManagement() {
                     )}
                 </div>
 
-                {/* Import Private Key Modal */}
-                <Modal open={importKeyModalOpen} onClose={() => setImportKeyModalOpen(false)}>
-                    <Box sx={modalStyle}>
-                        <h2 className="text-white text-xl font-medium mb-4">Import Private Key</h2>
-                        <TextField
-                            fullWidth
-                            label="Private Key"
-                            variant="outlined"
-                            value={importPrivateKeyInput}
-                            onChange={(e) => setImportPrivateKeyInput(e.target.value)}
-                            placeholder="0x..."
-                            type="password"
-                            sx={{
-                                mb: 3,
-                                "& .MuiInputBase-input": { color: "#D1D5DB" },
-                                "& .MuiInputLabel-root": { color: "#D1D5DB" },
-                                "& .MuiInputLabel-root.Mui-focused": { color: "#D1D5DB" },
-                                "& .MuiOutlinedInput-root": {
-                                    "& fieldset": { borderColor: "#D1D5DB" },
-                                    "&:hover fieldset": { borderColor: "#D1D5DB" },
-                                    "&.Mui-focused fieldset": { borderColor: "#D1D5DB" },
-                                },
-                            }}
-                        />
-                        <div className="flex gap-3">
-                            <Button
-                                variant="contained"
-                                onClick={importFromPrivateKey}
-                                sx={{ flex: 1, bgcolor: "#2563eb", "&:hover": { bgcolor: "#1d4ed8" } }}
-                            >
-                                Import
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    setImportKeyModalOpen(false);
-                                    setImportPrivateKeyInput("");
-                                }}
-                                sx={{ flex: 1, color: "#D1D5DB", borderColor: "#D1D5DB" }}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
-                    </Box>
-                </Modal>
+                <ImportPrivateKeyModal
+                    open={importKeyModalOpen}
+                    onClose={() => setImportKeyModalOpen(false)}
+                    privateKeyInput={importPrivateKeyInput}
+                    onPrivateKeyChange={setImportPrivateKeyInput}
+                    onImport={importFromPrivateKey}
+                />
 
-                {/* Import Mnemonic Modal */}
-                <Modal open={importPhraseModalOpen} onClose={() => setImportPhraseModalOpen(false)}>
-                    <Box sx={modalStyle}>
-                        <h2 className="text-white text-xl font-medium mb-4">Import Mnemonic Phrase</h2>
-                        <TextField
-                            fullWidth
-                            label="Mnemonic Phrase"
-                            variant="outlined"
-                            value={importMnemonicInput}
-                            onChange={(e) => setImportMnemonicInput(e.target.value)}
-                            placeholder="word1 word2 word3 ..."
-                            multiline
-                            rows={3}
-                            sx={{
-                                mb: 3,
-                                "& .MuiInputBase-input": { color: "#D1D5DB" },
-                                "& .MuiInputLabel-root": { color: "#D1D5DB" },
-                                "& .MuiInputLabel-root.Mui-focused": { color: "#D1D5DB" },
-                                "& .MuiOutlinedInput-root": {
-                                    "& fieldset": { borderColor: "#D1D5DB" },
-                                    "&:hover fieldset": { borderColor: "#D1D5DB" },
-                                    "&.Mui-focused fieldset": { borderColor: "#D1D5DB" },
-                                },
-                            }}
-                        />
-                        <div className="flex gap-3">
-                            <Button
-                                variant="contained"
-                                onClick={importFromMnemonic}
-                                sx={{ flex: 1, bgcolor: "#2563eb", "&:hover": { bgcolor: "#1d4ed8" } }}
-                            >
-                                Import
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                onClick={() => {
-                                    setImportPhraseModalOpen(false);
-                                    setImportMnemonicInput("");
-                                }}
-                                sx={{ flex: 1, color: "#D1D5DB", borderColor: "#D1D5DB" }}
-                            >
-                                Cancel
-                            </Button>
-                        </div>
-                    </Box>
-                </Modal>
+                <ImportMnemonicModal
+                    open={importPhraseModalOpen}
+                    onClose={() => setImportPhraseModalOpen(false)}
+                    mnemonicInput={importMnemonicInput}
+                    onMnemonicChange={setImportMnemonicInput}
+                    onImport={importFromMnemonic}
+                />
 
-                {/* Generated Wallet Modal */}
-                <Modal open={generatedWalletModalOpen} onClose={() => setGeneratedWalletModalOpen(false)}>
-                    <Box sx={modalStyle}>
-                        <h2 className="text-white text-xl font-medium mb-4">Wallet Generated Successfully!</h2>
-                        <div className="flex flex-col gap-4">
-                            <div className="bg-[#111827] p-4 rounded-lg">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-gray-400 text-sm">Private Key</span>
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => setShowPrivateKey(!showPrivateKey)}
-                                            className="text-gray-400 hover:text-white"
-                                        >
-                                            {showPrivateKey ? (
-                                                <MdVisibilityOff size={20} />
-                                            ) : (
-                                                <MdVisibility size={20} />
-                                            )}
-                                        </button>
-                                        <button
-                                            onClick={() => copyToClipboard(privateKey, "Private key")}
-                                            className="text-gray-400 hover:text-white"
-                                        >
-                                            <IoClipboardSharp size={20} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="text-white break-all text-sm">
-                                    {showPrivateKey ? privateKey : "••••••••••••••••••••••••••••••••"}
-                                </p>
-                            </div>
-                            {mnemonic && (
-                                <div className="bg-[#111827] p-4 rounded-lg">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="text-gray-400 text-sm">Mnemonic Phrase</span>
-                                        <div className="flex gap-2">
-                                            <button
-                                                onClick={() => setShowMnemonic(!showMnemonic)}
-                                                className="text-gray-400 hover:text-white"
-                                            >
-                                                {showMnemonic ? (
-                                                    <MdVisibilityOff size={20} />
-                                                ) : (
-                                                    <MdVisibility size={20} />
-                                                )}
-                                            </button>
-                                            <button
-                                                onClick={() => copyToClipboard(mnemonic, "Mnemonic")}
-                                                className="text-gray-400 hover:text-white"
-                                            >
-                                                <IoClipboardSharp size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <p className="text-white break-all text-sm">
-                                        {showMnemonic
-                                            ? mnemonic
-                                            : "•••• •••• •••• •••• •••• •••• •••• •••• •••• •••• •••• ••••"}
-                                    </p>
-                                </div>
-                            )}
-                            <div className="bg-yellow-900/20 border border-yellow-600 p-3 rounded-lg">
-                                <p className="text-yellow-400 text-sm">
-                                    ⚠️ Save your private key and mnemonic phrase securely. You'll need them to recover
-                                    your wallet.
-                                </p>
-                            </div>
-                            <Button
-                                variant="contained"
-                                onClick={() => {
-                                    setGeneratedWalletModalOpen(false);
-                                    setShowPrivateKey(false);
-                                    setShowMnemonic(false);
-                                }}
-                                sx={{ bgcolor: "#2563eb", "&:hover": { bgcolor: "#1d4ed8" } }}
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </Box>
-                </Modal>
+                <GeneratedWalletModal
+                    open={generatedWalletModalOpen}
+                    onClose={() => {
+                        setGeneratedWalletModalOpen(false);
+                        setShowPrivateKey(false);
+                        setShowMnemonic(false);
+                    }}
+                    privateKey={privateKey}
+                    mnemonic={mnemonic}
+                    showPrivateKey={showPrivateKey}
+                    showMnemonic={showMnemonic}
+                    onTogglePrivateKey={() => setShowPrivateKey(!showPrivateKey)}
+                    onToggleMnemonic={() => setShowMnemonic(!showMnemonic)}
+                    onCopyToClipboard={copyToClipboard}
+                />
             </div>
         </>
     );

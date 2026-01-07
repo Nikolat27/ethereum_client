@@ -7,7 +7,7 @@ import { ethService } from "../../services/provider";
 import { Contract, Interface } from "ethers";
 import { useWallet } from "../../contexts/WalletContext";
 import toast, { Toaster } from "react-hot-toast";
-import { Modal, Box, TextField, Button } from "@mui/material";
+import MethodExecutionModal from "../Modals/MethodExecutionModal";
 
 function ContractInteraction() {
     const sectionId = "contract-section";
@@ -25,22 +25,6 @@ function ContractInteraction() {
     const [methodParams, setMethodParams] = useState<string[]>([]);
     const [methodResult, setMethodResult] = useState<string>("");
     const [isExecuting, setIsExecuting] = useState<boolean>(false);
-
-    const modalStyle = {
-        position: "absolute" as const,
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 600,
-        maxWidth: "90%",
-        bgcolor: "#1f2937",
-        border: "1px solid #4b5563",
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2,
-        maxHeight: "80vh",
-        overflow: "auto",
-    };
 
     async function loadContract() {
         if (!address.trim()) {
@@ -354,92 +338,19 @@ function ContractInteraction() {
                         )}
                     </div>
 
-                    {/* Method Execution Modal */}
-                    <Modal open={methodModalOpen} onClose={() => setMethodModalOpen(false)}>
-                        <Box sx={modalStyle}>
-                            {selectedMethod && (
-                                <>
-                                    <h2 className="text-white text-xl font-medium mb-4 flex items-center gap-2">
-                                        {selectedMethod.isWrite ? (
-                                            <RiPencilFill className="text-blue-400" size={24} />
-                                        ) : (
-                                            <AiFillRead className="text-green-400" size={24} />
-                                        )}
-                                        {selectedMethod.name}
-                                        <span className="text-sm text-gray-400">
-                                            ({selectedMethod.stateMutability})
-                                        </span>
-                                    </h2>
-
-                                    {selectedMethod.inputs.length > 0 ? (
-                                        <div className="flex flex-col gap-3 mb-4">
-                                            <span className="text-gray-400 text-sm">Parameters:</span>
-                                            {selectedMethod.inputs.map((input: any, index: number) => (
-                                                <TextField
-                                                    key={index}
-                                                    fullWidth
-                                                    label={`${input.name || `param${index}`} (${input.type})`}
-                                                    variant="outlined"
-                                                    value={methodParams[index]}
-                                                    onChange={(e) => updateParam(index, e.target.value)}
-                                                    placeholder={input.type}
-                                                    sx={{
-                                                        "& .MuiInputBase-input": { color: "#D1D5DB" },
-                                                        "& .MuiInputLabel-root": { color: "#D1D5DB" },
-                                                        "& .MuiInputLabel-root.Mui-focused": { color: "#D1D5DB" },
-                                                        "& .MuiOutlinedInput-root": {
-                                                            "& fieldset": { borderColor: "#D1D5DB" },
-                                                            "&:hover fieldset": { borderColor: "#D1D5DB" },
-                                                            "&.Mui-focused fieldset": { borderColor: "#D1D5DB" },
-                                                        },
-                                                    }}
-                                                />
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-400 text-sm mb-4">No parameters required</p>
-                                    )}
-
-                                    {methodResult && (
-                                        <div className="bg-[#111827] p-4 rounded-lg mb-4 max-h-60 overflow-auto">
-                                            <span className="text-gray-400 text-sm block mb-2">Result:</span>
-                                            <pre className="text-green-400 text-sm">{methodResult}</pre>
-                                        </div>
-                                    )}
-
-                                    <div className="flex gap-3">
-                                        <Button
-                                            variant="contained"
-                                            onClick={executeMethod}
-                                            disabled={isExecuting}
-                                            sx={{
-                                                flex: 1,
-                                                bgcolor: selectedMethod.isWrite ? "#2563eb" : "#16a34a",
-                                                "&:hover": { bgcolor: selectedMethod.isWrite ? "#1d4ed8" : "#15803d" },
-                                                "&:disabled": { bgcolor: "#4b5563" },
-                                            }}
-                                        >
-                                            {isExecuting
-                                                ? "Executing..."
-                                                : selectedMethod.isWrite
-                                                ? "Send Transaction"
-                                                : "Call"}
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                setMethodModalOpen(false);
-                                                setMethodResult("");
-                                            }}
-                                            sx={{ flex: 1, color: "#D1D5DB", borderColor: "#D1D5DB" }}
-                                        >
-                                            Close
-                                        </Button>
-                                    </div>
-                                </>
-                            )}
-                        </Box>
-                    </Modal>
+                    <MethodExecutionModal
+                        open={methodModalOpen}
+                        onClose={() => {
+                            setMethodModalOpen(false);
+                            setMethodResult("");
+                        }}
+                        selectedMethod={selectedMethod}
+                        methodParams={methodParams}
+                        methodResult={methodResult}
+                        isExecuting={isExecuting}
+                        onUpdateParam={updateParam}
+                        onExecute={executeMethod}
+                    />
                 </div>
             </div>
         </>
