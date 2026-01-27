@@ -7,6 +7,8 @@ import { TiTick } from "react-icons/ti";
 import { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { RxCross1 } from "react-icons/rx";
+import { IoCopyOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 function Sidebar() {
     const [activeTab, setActiveTab] = useState<string>("network");
@@ -26,6 +28,23 @@ function Sidebar() {
                 scrollContainer.scrollTo({
                     top: elementTop - 80,
                     behavior: "smooth",
+                });
+            }
+        }
+    };
+
+    const copyAddressToClipboard = async () => {
+        if (walletAddress) {
+            try {
+                await navigator.clipboard.writeText(walletAddress);
+                toast.success("Address copied to clipboard", {
+                    duration: 1500,
+                    position: "top-right",
+                });
+            } catch (error) {
+                toast.error("Failed to copy address", {
+                    duration: 2000,
+                    position: "top-right",
                 });
             }
         }
@@ -107,9 +126,18 @@ function Sidebar() {
                 </div>
                 {isWalletConnected ? (
                     <>
-                        <span className="text-gray-400 text-sm">
-                            {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
-                        </span>
+                        <div className="flex flex-row items-center gap-2 w-full">
+                            <span className="text-gray-400 text-sm truncate flex-1">
+                                {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
+                            </span>
+                            <button
+                                onClick={copyAddressToClipboard}
+                                className="text-gray-400 hover:text-white transition-colors"
+                                title="Copy address to clipboard"
+                            >
+                                <IoCopyOutline size={16} />
+                            </button>
+                        </div>
                         <span className="text-gray-400 text-sm mt-2">{balance} ETH</span>
                     </>
                 ) : (

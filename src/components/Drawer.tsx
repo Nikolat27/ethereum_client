@@ -13,9 +13,16 @@ import { Divider } from "@mui/material";
 import { FaNetworkWired, FaWallet, FaFileContract } from "react-icons/fa";
 import { GrTransaction } from "react-icons/gr";
 import { BiSolidWrench } from "react-icons/bi";
+import { useWallet } from "../contexts/WalletContext";
+import { TiTick } from "react-icons/ti";
+import { RxCross1 } from "react-icons/rx";
+import { IoCopyOutline } from "react-icons/io5";
+import toast from "react-hot-toast";
 
 export default function TemporaryDrawer() {
     const [open, setOpen] = React.useState(false);
+    const { wallet, walletAddress, balance } = useWallet();
+    const isWalletConnected = wallet !== null;
 
     const toggleDrawer = (newOpen: boolean) => () => {
         setOpen(newOpen);
@@ -36,6 +43,23 @@ export default function TemporaryDrawer() {
         setOpen(false); // Close drawer after clicking
     };
 
+    const copyAddressToClipboard = async () => {
+        if (walletAddress) {
+            try {
+                await navigator.clipboard.writeText(walletAddress);
+                toast.success("Address copied to clipboard", {
+                    duration: 1500,
+                    position: "top-right",
+                });
+            } catch (error) {
+                toast.error("Failed to copy address", {
+                    duration: 2000,
+                    position: "top-right",
+                });
+            }
+        }
+    };
+
     const navigationItems = [
         { text: "Network", icon: <FaNetworkWired color="white" size={20} />, sectionId: "network-section" },
         { text: "Wallet", icon: <FaWallet color="white" size={20} />, sectionId: "wallet-section" },
@@ -45,7 +69,47 @@ export default function TemporaryDrawer() {
     ];
 
     const DrawerList = (
-        <Box sx={{ width: 250, color: "white" }} role="presentation">
+        <Box sx={{ width: 280, color: "white" }} role="presentation">
+            {/* Wallet Status Section */}
+            <Box sx={{ p: 2, bgcolor: "#111827", borderRadius: 1, m: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                    <span style={{ color: "#9CA3AF", fontSize: "13px", fontWeight: 500 }}>
+                        {isWalletConnected ? "ACTIVE WALLET" : "NO WALLET"}
+                    </span>
+                    {isWalletConnected ? (
+                        <Box sx={{ width: 20, height: 20, bgcolor: "white", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <TiTick style={{ color: "#10B981", fontSize: 14 }} />
+                        </Box>
+                    ) : (
+                        <Box sx={{ width: 20, height: 20, bgcolor: "white", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <RxCross1 style={{ color: "#EF4444", fontSize: 14 }} />
+                        </Box>
+                    )}
+                </Box>
+
+                {isWalletConnected ? (
+                    <>
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
+                            <span style={{ color: "#9CA3AF", fontSize: "14px", flex: 1, overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {walletAddress.slice(0, 8)}...{walletAddress.slice(-6)}
+                            </span>
+                            <button
+                                onClick={copyAddressToClipboard}
+                                style={{ color: "#9CA3AF", marginLeft: 8 }}
+                                title="Copy address to clipboard"
+                            >
+                                <IoCopyOutline size={16} />
+                            </button>
+                        </Box>
+                        <span style={{ color: "#9CA3AF", fontSize: "14px" }}>{balance} ETH</span>
+                    </>
+                ) : (
+                    <span style={{ color: "#6B7280", fontSize: "14px" }}>Connect a wallet to get started</span>
+                )}
+            </Box>
+
+            <Divider style={{ backgroundColor: "#4b5563" }} />
+
             <List>
                 {navigationItems.map((item) => (
                     <ListItem key={item.text} disablePadding>
@@ -58,13 +122,14 @@ export default function TemporaryDrawer() {
             </List>
             <Divider style={{ backgroundColor: "#4b5563" }} />
             <List>
-                {["Docs", "Settings"].map((text, index) => (
-                    <ListItem key={text} disablePadding>
+                {[
+                    { text: "Docs", icon: <IoDocumentSharp color="white" /> },
+                    { text: "Settings", icon: <IoMdSettings color="white" /> }
+                ].map((item) => (
+                    <ListItem key={item.text} disablePadding>
                         <ListItemButton>
-                            <ListItemIcon>
-                                {index % 2 === 0 ? <IoDocumentSharp color="white" /> : <IoMdSettings color="white" />}
-                            </ListItemIcon>
-                            <ListItemText primary={text} />
+                            <ListItemIcon>{item.icon}</ListItemIcon>
+                            <ListItemText primary={item.text} />
                         </ListItemButton>
                     </ListItem>
                 ))}

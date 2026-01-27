@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaWallet } from "react-icons/fa";
 import { FiPlus } from "react-icons/fi";
 import { IoKey } from "react-icons/io5";
@@ -31,6 +31,11 @@ function WalletManagement() {
     const [showPrivateKey, setShowPrivateKey] = useState(false);
     const [showMnemonic, setShowMnemonic] = useState(false);
 
+    // Debug logging for visibility states
+    useEffect(() => {
+        console.log('Wallet: Visibility states updated - showPrivateKey:', showPrivateKey, 'showMnemonic:', showMnemonic);
+    }, [showPrivateKey, showMnemonic]);
+
     async function generateWallet() {
         try {
             const newWallet = signerService.newWallet();
@@ -48,6 +53,10 @@ function WalletManagement() {
             }
 
             await updateBalance(address);
+            console.log('Wallet: Opening generated wallet modal');
+            // Reset visibility states when opening modal
+            setShowPrivateKey(false);
+            setShowMnemonic(false);
             setGeneratedWalletModalOpen(true);
 
             toast.success("Wallet generated successfully!", {
@@ -135,11 +144,20 @@ function WalletManagement() {
 
     async function updateBalance(address: string) {
         try {
+            // Only try to fetch balance if we have a valid RPC URL
+            const currentRpcUrl = ethService.getCurrentRpcUrl();
+            if (!currentRpcUrl || currentRpcUrl === "http://localhost:8545") {
+                console.log("Skipping balance update - no valid RPC URL");
+                setBalance("0.0");
+                return;
+            }
+
             const balanceWei = await ethService.getBalance(address);
             const balanceEth = (Number(balanceWei) / 1e18).toFixed(4);
             setBalance(balanceEth);
         } catch (error) {
             console.error("Failed to fetch balance:", error);
+            // Don't spam requests on failure
             setBalance("0.0");
         }
     }
@@ -252,17 +270,27 @@ function WalletManagement() {
                 <GeneratedWalletModal
                     open={generatedWalletModalOpen}
                     onClose={() => {
+                        console.log('Wallet: Closing modal');
                         setGeneratedWalletModalOpen(false);
-                        setShowPrivateKey(false);
-                        setShowMnemonic(false);
                     }}
                     privateKey={privateKey}
                     mnemonic={mnemonic}
                     showPrivateKey={showPrivateKey}
                     showMnemonic={showMnemonic}
-                    onTogglePrivateKey={() => setShowPrivateKey(!showPrivateKey)}
-                    onToggleMnemonic={() => setShowMnemonic(!showMnemonic)}
+                    onTogglePrivateKey={() => {
+                        console.log('Wallet: Toggling private key from', showPrivateKey, 'to', !showPrivateKey);
+                        setShowPrivateKey(!showPrivateKey);
+                    }}
+                    onToggleMnemonic={() => {
+                        console.log('Wallet: Toggling mnemonic from', showMnemonic, 'to', !showMnemonic);
+                        setShowMnemonic(!showMnemonic);
+                    }}
                     onCopyToClipboard={copyToClipboard}
+                    onResetVisibility={() => {
+                        console.log('Wallet: Resetting visibility states');
+                        setShowPrivateKey(false);
+                        setShowMnemonic(false);
+                    }}
                 />
             </div>
         </>

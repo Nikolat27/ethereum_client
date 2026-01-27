@@ -194,7 +194,8 @@ function Utilities() {
                                 {validationResult}
                             </div>
                         )}
-                        <button
+                        <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+                            <button
                             onClick={validateAddress}
                             className="w-full sm:w-60 h-auto py-4 px-6 text-center text-white hover:bg-gray-600
                       bg-[#374151] font-medium rounded-lg cursor-pointer transition-colors duration-200"
@@ -208,6 +209,7 @@ function Utilities() {
                         >
                             Convert to Checksum
                         </button>
+                        </div>
                     </div>
                 </div>
                 <div
