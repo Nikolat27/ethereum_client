@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { FaCode } from "react-icons/fa";
+import { FaCode, FaCopy, FaPlay } from "react-icons/fa";
 import SelectOption from "../CustomSelectOption";
 import { type SelectChangeEvent } from "@mui/material";
 import type { SelectItemsList } from "../../types/types";
-import { FaPlay } from "react-icons/fa";
 import { ethService } from "../../services/provider";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -100,14 +99,86 @@ function RawJsonRpcRequest() {
             const provider = ethService["client"];
             const result = await provider.send(method, params);
 
-            // Format response
-            const formattedResponse = JSON.stringify(
-                result,
-                (key, value) => (typeof value === "bigint" ? value.toString() : value),
-                2
-            );
+            // Specific parsers for different RPC methods
+            function parseBlockNumber(value: string): string {
+                try {
+                    const decimalValue = BigInt(value);
+                    return `${value} (${decimalValue.toString()})`;
+                } catch {
+                    return value;
+                }
+            }
 
-            setResponse(formattedResponse);
+            function parseBalance(value: string): string {
+                try {
+                    const decimalValue = BigInt(value);
+                    const ethValue = Number(decimalValue) / 1e18;
+
+                    if (!isFinite(ethValue) || isNaN(ethValue)) {
+                        return `Invalid balance (raw: ${value})`;
+                    }
+
+                    const formattedEth = ethValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 6,
+                        maximumFractionDigits: 6
+                    });
+                    return `${formattedEth} ETH`;
+                } catch {
+                    return value;
+                }
+            }
+
+            function parseGasPrice(value: string): string {
+                try {
+                    const decimalValue = BigInt(value);
+                    const gweiValue = Number(decimalValue) / 1e9;
+
+                    const formattedGwei = gweiValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                    return `${formattedGwei} Gwei`;
+                } catch {
+                    return value;
+                }
+            }
+
+            function parseGenericHex(value: string): string {
+                try {
+                    const decimalValue = BigInt(value);
+
+                    return `${value} ${decimalValue.toString()}`;
+                } catch {
+                    return value;
+                }
+            }
+
+            // Main parser that routes to appropriate handler
+            function parseResponse(obj: any, methodName: string): any {
+                if (typeof obj === 'string' && obj.startsWith('0x')) {
+                    switch (methodName) {
+                        case 'eth_blockNumber':
+                            return parseBlockNumber(obj);
+                        case 'eth_getBalance':
+                            return parseBalance(obj);
+                        case 'eth_gasPrice':
+                            return parseGasPrice(obj);
+                        default:
+                            return parseGenericHex(obj);
+                    }
+                } else if (Array.isArray(obj)) {
+                    return obj.map(item => parseResponse(item, methodName));
+                } else if (obj !== null && typeof obj === 'object') {
+                    const newObj: any = {};
+                    for (const key in obj) {
+                        newObj[key] = parseResponse(obj[key], methodName);
+                    }
+                    return newObj;
+                }
+                return obj;
+            }
+
+            setResponse(result);
 
             toast.success("Request executed successfully!", {
                 duration: 2000,
@@ -159,20 +230,34 @@ function RawJsonRpcRequest() {
                         onClick={executeRequest}
                         className={`flex flex-row items-center self-center justify-center w-full sm:w-56 h-15
                   bg-[#2563eb] text-white rounded-lg gap-4 select-none
-                  transition-colors duration-200 hover:bg-blue-700 ${
-                      isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
-                  }`}
+                  transition-colors duration-200 hover:bg-blue-700 ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+                            }`}
                     >
                         <FaPlay />
                         <span className="font-medium">{isLoading ? "Executing..." : "Execute Request"}</span>
                     </div>
-                    <div
-                        className="flex flex-col p-4 gap-2 w-full items-start justify-start bg-[#1f2937]
-                    border border-gray-500 text-gray-400 h-auto rounded-lg max-h-96 overflow-auto"
-                    >
-                        <span className="font-medium">Response: </span>
+                    <div className="flex flex-col p-4 gap-2 w-full items-start justify-start bg-[#1f2937]
+                    border border-gray-500 text-gray-400 h-auto rounded-lg max-h-96 overflow-auto">
+                        <div className="flex flex-row items-center justify-between w-full">
+                            <span className="font-medium">Response: </span>
+                            {response && (
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(response);
+                                        toast.success("Response copied to clipboard!", {
+                                            duration: 2000,
+                                            position: "top-right",
+                                        });
+                                    }}
+                                    className="flex flex-row items-center gap-2 px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm transition-colors duration-200"
+                                >
+                                    <FaCopy size={14} />
+                                    <span>Copy</span>
+                                </button>
+                            )}
+                        </div>
                         {response ? (
-                            <pre className="text-gray-200 text-sm w-full overflow-x-auto">{response}</pre>
+                            <pre className="text-gray-200 font-medium text-lg w-full overflow-x-auto">{response}</pre>
                         ) : (
                             <p className="text-gray-500">No response yet. Select a method and execute the request.</p>
                         )}

@@ -5,6 +5,7 @@ const WalletManagement = lazy(() => import("../components/Main/Wallet"));
 const TransactionBuilder = lazy(() => import("../components/Main/Transaction"));
 const ContractInteraction = lazy(() => import("../components/Main/Contract"));
 const JsonRequest = lazy(() => import("../components/Main/JsonRequest"));
+const BytecodeAnalyzer = lazy(() => import("../components/Main/BytecodeAnalyzer"));
 const Utilities = lazy(() => import("../components/Main/Utilities"));
 
 export function Main() {
@@ -18,6 +19,7 @@ export function Main() {
             <TransactionBuilder />
             <ContractInteraction />
             <JsonRequest />
+            <BytecodeAnalyzer />
             <Utilities />
         </div>
     );
