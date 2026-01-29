@@ -56,9 +56,9 @@ function Header() {
 
     return (
         <header className="flex flex-row w-full h-14 bg-[#1f2937] sticky px-2 sm:px-4 mx-auto top-0 border-b border-gray-700 items-center gap-x-2 sm:gap-x-4 justify-start z-50">
-            <div className="flex flex-row w-auto gap-x-2 h-auto px-2 sm:px-3 border-r border-r-gray-600">
+            <div className="flex flex-row w-auto gap-x-2 h-auto px-2 sm:px-3 border-r border-r-gray-600 items-center justify-center">
                 <FaEthereum color="white" size={24} className="sm:w-8 sm:h-8" />
-                <span className="text-white font-medium text-lg sm:text-xl xs:block">EVM Explorer</span>
+                <h1 className="text-white font-medium text-lg sm:text-xl xs:block">Ethereum Client</h1>
             </div>
 
             {/* Compact network status for mobile */}

@@ -68,7 +68,6 @@ function BytecodeAnalyzer() {
             if (abi.trim()) {
                 try {
                     const parsedAbi = JSON.parse(abi);
-                    const iface = new ethers.Interface(parsedAbi);
 
                     analysis.functions = [];
                     analysis.events = [];
