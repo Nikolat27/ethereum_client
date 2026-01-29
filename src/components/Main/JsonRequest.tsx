@@ -4,10 +4,12 @@ import SelectOption from "../CustomSelectOption";
 import { type SelectChangeEvent } from "@mui/material";
 import type { SelectItemsList } from "../../types/types";
 import { ethService } from "../../services/provider";
+import { useWallet } from "../../contexts/WalletContext";
 import toast, { Toaster } from "react-hot-toast";
 
 function RawJsonRpcRequest() {
     const sectionId = "json-rpc-section";
+    const { walletAddress } = useWallet();
     const [method, setMethod] = useState<string>("eth_blockNumber");
     const [parameters, setParameters] = useState<string>("");
     const [response, setResponse] = useState<string>("");
@@ -32,12 +34,14 @@ function RawJsonRpcRequest() {
         setResponse("");
 
         // Set example parameters based on method
+        const exampleAddress = walletAddress || "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb";
+
         switch (selectedMethod) {
             case "eth_getBalance":
-                setParameters('["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "latest"]');
+                setParameters(`["${exampleAddress}", "latest"]`);
                 break;
             case "eth_getTransactionCount":
-                setParameters('["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "latest"]');
+                setParameters(`["${exampleAddress}", "latest"]`);
                 break;
             case "eth_getTransactionByHash":
                 setParameters('["0x..."]');
@@ -99,7 +103,6 @@ function RawJsonRpcRequest() {
             const provider = ethService["client"];
             const result = await provider.send(method, params);
 
-            // Specific parsers for different RPC methods
             function parseBlockNumber(value: string): string {
                 try {
                     const decimalValue = BigInt(value);
@@ -112,17 +115,18 @@ function RawJsonRpcRequest() {
             function parseBalance(value: string): string {
                 try {
                     const decimalValue = BigInt(value);
+                    const weiValue = decimalValue.toString();
                     const ethValue = Number(decimalValue) / 1e18;
 
                     if (!isFinite(ethValue) || isNaN(ethValue)) {
-                        return `Invalid balance (raw: ${value})`;
+                        return `${value} (${weiValue} wei = Invalid balance)`;
                     }
 
                     const formattedEth = ethValue.toLocaleString('en-US', {
                         minimumFractionDigits: 6,
                         maximumFractionDigits: 6
                     });
-                    return `${formattedEth} ETH`;
+                    return `${value} (${formattedEth} ETH)`;
                 } catch {
                     return value;
                 }
@@ -131,13 +135,14 @@ function RawJsonRpcRequest() {
             function parseGasPrice(value: string): string {
                 try {
                     const decimalValue = BigInt(value);
+                    const weiValue = decimalValue.toString();
                     const gweiValue = Number(decimalValue) / 1e9;
 
                     const formattedGwei = gweiValue.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
-                    return `${formattedGwei} Gwei`;
+                    return `${value} (${weiValue} wei = ${formattedGwei} Gwei)`;
                 } catch {
                     return value;
                 }
@@ -146,8 +151,21 @@ function RawJsonRpcRequest() {
             function parseGenericHex(value: string): string {
                 try {
                     const decimalValue = BigInt(value);
+                    const decimalStr = decimalValue.toString();
 
-                    return `${value} ${decimalValue.toString()}`;
+                    // For large numbers, also show ETH equivalent
+                    if (decimalValue > 1000000000000000n) { // > 0.001 ETH
+                        const ethValue = Number(decimalValue) / 1e18;
+                        if (isFinite(ethValue) && !isNaN(ethValue)) {
+                            const formattedEth = ethValue.toLocaleString('en-US', {
+                                minimumFractionDigits: 6,
+                                maximumFractionDigits: 6
+                            });
+                            return `${value} (${decimalStr} = ${formattedEth} ETH)`;
+                        }
+                    }
+
+                    return `${value} (${decimalStr})`;
                 } catch {
                     return value;
                 }
@@ -178,7 +196,8 @@ function RawJsonRpcRequest() {
                 return obj;
             }
 
-            setResponse(result);
+            const parsedResult = parseResponse(result, method);
+            setResponse(JSON.stringify(parsedResult, null, 2));
 
             toast.success("Request executed successfully!", {
                 duration: 2000,

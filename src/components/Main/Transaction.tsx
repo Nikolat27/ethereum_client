@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaTelegramPlane } from "react-icons/fa";
+import { FaTelegramPlane, FaCopy } from "react-icons/fa";
 import { IoIosWarning } from "react-icons/io";
 import CustomTextField from "../CustomTextField";
 import { IoIosCalculator } from "react-icons/io";
@@ -54,16 +54,32 @@ function TransactionBuilder() {
             const estimatedGasLimit = await ethService.estimateGas(tx);
             setGasLimit(estimatedGasLimit.toString());
 
-            // Get current gas price
+            // Get current fee data
             const feeData = await ethService.getFeeData();
-            const currentGasPrice = feeData.gasPrice || BigInt(0);
-            const gasPriceGwei = formatUnits(currentGasPrice, "gwei");
-            setGasPrice(gasPriceGwei);
 
-            // Calculate estimated fee
-            const fee = estimatedGasLimit * currentGasPrice;
-            const feeEth = formatUnits(fee, "ether");
-            setEstimatedFee(feeEth);
+            let estimatedFeeEth = "0.0";
+
+            // Calculate estimated fee based on network type
+            if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+                // EIP-1559 network
+                const maxFee = feeData.maxFeePerGas;
+                const fee = estimatedGasLimit * maxFee;
+                estimatedFeeEth = formatUnits(fee, "ether");
+
+                // Show suggested gas price in Gwei for user reference
+                const suggestedGasPrice = formatUnits(maxFee, "gwei");
+                setGasPrice(suggestedGasPrice);
+            } else {
+                // Legacy network
+                const currentGasPrice = feeData.gasPrice || BigInt(0);
+                const gasPriceGwei = formatUnits(currentGasPrice, "gwei");
+                setGasPrice(gasPriceGwei);
+
+                const fee = estimatedGasLimit * currentGasPrice;
+                estimatedFeeEth = formatUnits(fee, "ether");
+            }
+
+            setEstimatedFee(estimatedFeeEth);
 
             toast.success("Gas estimated successfully!", {
                 duration: 2000,
@@ -109,13 +125,40 @@ function TransactionBuilder() {
             setIsSending(true);
             const walletService = new WalletService(wallet);
 
-            const tx = {
+            // Check if user has sufficient funds
+            const totalCost = parseFloat(txValue) + parseFloat(estimatedFee);
+            const balance = await ethService.getBalance(walletAddress);
+            const balanceEth = Number(balance) / 1e18;
+
+            if (balanceEth < totalCost) {
+                toast.error(
+                    `Insufficient funds. Need ${totalCost.toFixed(6)} ETH but only have ${balanceEth.toFixed(6)} ETH`,
+                    {
+                        duration: 4000,
+                        position: "top-right",
+                    }
+                );
+                setIsSending(false);
+                return;
+            }
+
+            // Check if network supports EIP-1559
+            const feeData = await ethService.getFeeData();
+
+            let tx: any = {
                 to,
                 value: parseEther(txValue),
                 gasLimit: BigInt(gasLimit),
-                gasPrice: parseEther(gasPrice).toString(),
                 data: data || "0x",
             };
+
+            // Use EIP-1559 if supported, otherwise legacy
+            if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
+                tx.maxFeePerGas = feeData.maxFeePerGas;
+                tx.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas;
+            } else {
+                tx.gasPrice = parseEther(gasPrice).toString();
+            }
 
             toast.loading("Signing and sending transaction...", {
                 duration: 2000,
@@ -125,14 +168,37 @@ function TransactionBuilder() {
             const txResponse = await walletService.sendTransaction(tx, ethService["client"]);
 
             toast.success(
-                <div className="flex flex-col gap-1">
-                    <span className="font-medium">Transaction sent!</span>
-                    <span className="text-xs">
-                        Hash: {txResponse.hash.slice(0, 10)}...{txResponse.hash.slice(-8)}
-                    </span>
+                <div className="flex flex-col gap-2 max-w-md">
+                    <span className="font-medium text-green-400">Transaction sent successfully!</span>
+                    <div className="flex flex-row items-center gap-2 bg-gray-800 p-2 rounded">
+                        <span className="text-xs font-mono text-gray-300 flex-1 truncate">
+                            {txResponse.hash}
+                        </span>
+                        <button
+                            onClick={() => {
+                                navigator.clipboard.writeText(txResponse.hash);
+                                toast.success("Transaction hash copied!", {
+                                    duration: 2000,
+                                    position: "top-right",
+                                });
+                            }}
+                            className="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs transition-colors"
+                        >
+                            <FaCopy size={12} />
+                            Copy
+                        </button>
+                    </div>
+                    <a
+                        href={`https://etherscan.io/tx/${txResponse.hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 hover:text-blue-300 text-sm underline"
+                    >
+                        View on Etherscan
+                    </a>
                 </div>,
                 {
-                    duration: 5000,
+                    duration: 8000,
                     position: "top-right",
                 }
             );
@@ -201,7 +267,7 @@ function TransactionBuilder() {
                             value={gasPrice}
                             onChange={setGasPrice}
                             label="Gas Price (Gwei)"
-                            placeholder="20"
+                            placeholder="2"
                         />
                     </div>
                     <CustomTextField value={data} onChange={setData} label="Data (ETH)" placeholder="0x..." />
