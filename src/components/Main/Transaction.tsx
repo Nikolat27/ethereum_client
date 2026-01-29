@@ -23,6 +23,7 @@ function TransactionBuilder() {
     const [estimatedFee, setEstimatedFee] = useState<string>("0.0");
     const [isEstimating, setIsEstimating] = useState<boolean>(false);
     const [isSending, setIsSending] = useState<boolean>(false);
+    const [lastTransactionHash, setLastTransactionHash] = useState<string>("");
 
     async function estimateGas() {
         if (!wallet) {
@@ -166,42 +167,12 @@ function TransactionBuilder() {
             });
 
             const txResponse = await walletService.sendTransaction(tx, ethService["client"]);
+            setLastTransactionHash(txResponse.hash);
 
-            toast.success(
-                <div className="flex flex-col gap-2 max-w-md">
-                    <span className="font-medium text-green-400">Transaction sent successfully!</span>
-                    <div className="flex flex-row items-center gap-2 bg-gray-800 p-2 rounded">
-                        <span className="text-xs font-mono text-gray-300 flex-1 truncate">
-                            {txResponse.hash}
-                        </span>
-                        <button
-                            onClick={() => {
-                                navigator.clipboard.writeText(txResponse.hash);
-                                toast.success("Transaction hash copied!", {
-                                    duration: 2000,
-                                    position: "top-right",
-                                });
-                            }}
-                            className="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs transition-colors"
-                        >
-                            <FaCopy size={12} />
-                            Copy
-                        </button>
-                    </div>
-                    <a
-                        href={`https://etherscan.io/tx/${txResponse.hash}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 text-sm underline"
-                    >
-                        View on Etherscan
-                    </a>
-                </div>,
-                {
-                    duration: 8000,
-                    position: "top-right",
-                }
-            );
+            toast.success("Transaction sent successfully!", {
+                duration: 3000,
+                position: "top-right",
+            });
 
             // Reset form
             setTo("");
@@ -305,6 +276,49 @@ function TransactionBuilder() {
                             <span>{isSending ? "Sending..." : "Sign & Send"}</span>
                         </div>
                     </div>
+
+                    {/* Last Transaction Info */}
+                    {lastTransactionHash && (
+                        <div className="flex flex-col w-full gap-3 p-4 bg-gray-800 rounded-lg border border-gray-600">
+                            <div className="flex flex-row items-center justify-between">
+                                <span className="text-green-400 font-medium">Last Transaction Sent</span>
+                                <button
+                                    onClick={() => setLastTransactionHash("")}
+                                    className="text-gray-400 hover:text-white text-sm"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+
+                            <div className="flex flex-row items-center gap-2 bg-gray-900 p-3 rounded">
+                                <span className="text-sm font-mono text-gray-300 flex-1 break-all">
+                                    {lastTransactionHash}
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(lastTransactionHash);
+                                        toast.success("Transaction hash copied!", {
+                                            duration: 2000,
+                                            position: "top-right",
+                                        });
+                                    }}
+                                    className="flex items-center px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors text-white gap-2"
+                                >
+                                    <FaCopy color="white" size={14} />
+                                    Copy
+                                </button>
+                            </div>
+
+                            <a
+                                href={`https://etherscan.io/tx/${lastTransactionHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 hover:text-blue-300 text-sm underline self-start"
+                            >
+                                View on Etherscan →
+                            </a>
+                        </div>
+                    )}
                 </div>
             </div>
         </>

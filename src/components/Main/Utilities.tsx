@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { HiMiniWrench } from "react-icons/hi2";
 import CustomTextField from "../CustomTextField";
 import { privateKeyToAddress } from "../../utils/converters";
-import { isAddress } from "ethers";
+import { isAddress, getAddress } from "ethers";
 import toast, { Toaster } from "react-hot-toast";
 
 function Utilities() {
@@ -97,13 +97,30 @@ function Utilities() {
         }
 
         try {
-            if (isAddress(address)) {
-                const checksumAddress = address; // ethers v6 already returns checksum
-                setAddress(checksumAddress);
-                toast.success("Address converted to checksum format", {
-                    duration: 2000,
-                    position: "top-right",
-                });
+            let addressToConvert = address.trim();
+
+            // Add 0x prefix if missing
+            if (!addressToConvert.startsWith('0x')) {
+                addressToConvert = '0x' + addressToConvert;
+            }
+
+            if (isAddress(addressToConvert)) {
+                // Convert to checksum address using ethers.getAddress()
+                const checksumAddress = getAddress(addressToConvert);
+
+                // Only update and show success if the address actually changed
+                if (checksumAddress !== address) {
+                    setAddress(checksumAddress);
+                    toast.success("Address converted to checksum format", {
+                        duration: 2000,
+                        position: "top-right",
+                    });
+                } else {
+                    toast.success("Address is already in checksum format", {
+                        duration: 2000,
+                        position: "top-right",
+                    });
+                }
             } else {
                 toast.error("Invalid address format", {
                     duration: 2000,

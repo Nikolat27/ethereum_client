@@ -17,11 +17,13 @@ import { useWallet } from "../contexts/WalletContext";
 import { TiTick } from "react-icons/ti";
 import { RxCross1 } from "react-icons/rx";
 import { IoCopyOutline } from "react-icons/io5";
+import { MdRefresh } from "react-icons/md";
 import toast from "react-hot-toast";
+import { ethService } from "../services/provider";
 
 export default function TemporaryDrawer() {
     const [open, setOpen] = React.useState(false);
-    const { wallet, walletAddress, balance } = useWallet();
+    const { wallet, walletAddress, balance, setBalance } = useWallet();
     const isWalletConnected = wallet !== null;
 
     const toggleDrawer = (newOpen: boolean) => () => {
@@ -57,6 +59,36 @@ export default function TemporaryDrawer() {
                     position: "top-right",
                 });
             }
+        }
+    };
+
+    const refreshBalance = async () => {
+        if (!walletAddress) return;
+
+        try {
+            const currentRpcUrl = ethService.getCurrentRpcUrl();
+            if (!currentRpcUrl || currentRpcUrl === "http://localhost:8545") {
+                toast.error("No valid RPC URL configured", {
+                    duration: 2000,
+                    position: "top-right",
+                });
+                return;
+            }
+
+            const balanceWei = await ethService.getBalance(walletAddress);
+            const balanceEth = (Number(balanceWei) / 1e18).toFixed(4);
+            setBalance(balanceEth);
+
+            toast.success("Balance refreshed!", {
+                duration: 1500,
+                position: "top-right",
+            });
+        } catch (error) {
+            console.error("Failed to refresh balance:", error);
+            toast.error("Failed to refresh balance", {
+                duration: 2000,
+                position: "top-right",
+            });
         }
     };
 
@@ -101,7 +133,18 @@ export default function TemporaryDrawer() {
                                 <IoCopyOutline size={16} />
                             </button>
                         </Box>
-                        <span style={{ color: "#9CA3AF", fontSize: "14px" }}>{balance} ETH</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+                            <span style={{ color: "#9CA3AF", fontSize: "14px" }}>{balance} ETH</span>
+                            {isWalletConnected && (
+                                <button
+                                    onClick={refreshBalance}
+                                    style={{ color: "#9CA3AF", cursor: "pointer" }}
+                                    title="Refresh balance"
+                                >
+                                    <MdRefresh size={16} />
+                                </button>
+                            )}
+                        </div>
                     </>
                 ) : (
                     <span style={{ color: "#6B7280", fontSize: "14px" }}>Connect a wallet to get started</span>

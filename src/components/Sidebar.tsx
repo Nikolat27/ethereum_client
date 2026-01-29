@@ -8,11 +8,13 @@ import { useState } from "react";
 import { useWallet } from "../contexts/WalletContext";
 import { RxCross1 } from "react-icons/rx";
 import { IoCopyOutline } from "react-icons/io5";
+import { MdRefresh } from "react-icons/md";
 import toast from "react-hot-toast";
+import { ethService } from "../services/provider";
 
 function Sidebar() {
     const [activeTab, setActiveTab] = useState<string>("network");
-    const { wallet, walletAddress, balance } = useWallet();
+    const { wallet, walletAddress, balance, setBalance } = useWallet();
     const isWalletConnected = wallet !== null;
     const tabActiveStyle: string = "text-[#60A5FA] bg-[#111827]";
     const tabNotActiveStyle: string = "text-[#D1D5DB]";
@@ -47,6 +49,36 @@ function Sidebar() {
                     position: "top-right",
                 });
             }
+        }
+    };
+
+    const refreshBalance = async () => {
+        if (!walletAddress) return;
+
+        try {
+            const currentRpcUrl = ethService.getCurrentRpcUrl();
+            if (!currentRpcUrl || currentRpcUrl === "http://localhost:8545") {
+                toast.error("No valid RPC URL configured", {
+                    duration: 2000,
+                    position: "top-right",
+                });
+                return;
+            }
+
+            const balanceWei = await ethService.getBalance(walletAddress);
+            const balanceEth = (Number(balanceWei) / 1e18).toFixed(4);
+            setBalance(balanceEth);
+
+            toast.success("Balance refreshed!", {
+                duration: 1500,
+                position: "top-right",
+            });
+        } catch (error) {
+            console.error("Failed to refresh balance:", error);
+            toast.error("Failed to refresh balance", {
+                duration: 2000,
+                position: "top-right",
+            });
         }
     };
 
@@ -138,7 +170,18 @@ function Sidebar() {
                                 <IoCopyOutline size={16} />
                             </button>
                         </div>
-                        <span className="text-gray-400 text-sm mt-2">{balance} ETH</span>
+                        <div className="flex flex-row items-center gap-2 mt-2">
+                            <span className="text-gray-400 text-sm">{balance} ETH</span>
+                            {isWalletConnected && (
+                                <button
+                                    onClick={refreshBalance}
+                                    className="text-gray-400 hover:text-white transition-colors"
+                                    title="Refresh balance"
+                                >
+                                    <MdRefresh size={16} />
+                                </button>
+                            )}
+                        </div>
                     </>
                 ) : (
                     <span className="text-gray-500 text-sm mt-2">Connect a wallet to get started</span>
