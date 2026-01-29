@@ -9,6 +9,7 @@ import { ethService } from "../../services/provider";
 import { WalletService } from "../../services/wallet";
 import toast, { Toaster } from "react-hot-toast";
 import { parseEther, formatUnits } from "ethers";
+import TransactionConfirmModal from "../Modals/TransactionConfirmModal";
 
 function TransactionBuilder() {
     const sectionId = "transaction-section";
@@ -24,6 +25,7 @@ function TransactionBuilder() {
     const [isEstimating, setIsEstimating] = useState<boolean>(false);
     const [isSending, setIsSending] = useState<boolean>(false);
     const [lastTransactionHash, setLastTransactionHash] = useState<string>("");
+    const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
 
     async function estimateGas() {
         if (!wallet) {
@@ -123,6 +125,40 @@ function TransactionBuilder() {
         }
 
         try {
+            // Check if user has sufficient funds (validation only)
+            const totalCost = parseFloat(txValue) + parseFloat(estimatedFee);
+            const balance = await ethService.getBalance(walletAddress);
+            const balanceEth = Number(balance) / 1e18;
+
+            if (balanceEth < totalCost) {
+                toast.error(
+                    `Insufficient funds. Need ${totalCost.toFixed(6)} ETH but only have ${balanceEth.toFixed(6)} ETH`,
+                    {
+                        duration: 4000,
+                        position: "top-right",
+                    }
+                );
+                setIsSending(false);
+                return;
+            }
+
+            // Open confirmation modal instead of sending directly
+            setConfirmModalOpen(true);
+            setIsSending(false);
+        } catch (error: any) {
+            console.error("Pre-transaction check error:", error);
+            toast.error(error.message || "Failed to prepare transaction", {
+                duration: 3000,
+                position: "top-right",
+            });
+            setIsSending(false);
+        }
+    }
+
+    async function executeTransaction() {
+        if (!wallet) return;
+
+        try {
             setIsSending(true);
             const walletService = new WalletService(wallet);
 
@@ -205,6 +241,22 @@ function TransactionBuilder() {
     return (
         <>
             <Toaster />
+            <TransactionConfirmModal
+                open={confirmModalOpen}
+                onClose={() => setConfirmModalOpen(false)}
+                onConfirm={executeTransaction}
+                transactionDetails={
+                    {
+                        to,
+                        value: txValue,
+                        gasLimit,
+                        gasPrice,
+                        data,
+                        estimatedFee,
+                        totalCost: calculateTotalCost()
+                    }
+                }
+            />
             <div
                 id={sectionId}
                 className="flex flex-col w-full p-5 gap-y-6 rounded-lg bg-[#1f2937] border border-gray-600"
