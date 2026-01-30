@@ -80,14 +80,14 @@ function Header() {
             </div>
 
             <div className="flex flex-row w-auto ml-auto text-white gap-x-2">
-                <div className="cursor-pointer sm:flex hidden flex-row bg-gray-500 py-1 px-2 rounded-lg gap-x-2 items-center justify-center">
+                {/* <div className="cursor-pointer sm:flex hidden flex-row bg-gray-500 py-1 px-2 rounded-lg gap-x-2 items-center justify-center">
                     <IoDocumentSharp size={21} />
                     <span>Docs</span>
                 </div>
                 <div className="cursor-pointer sm:flex hidden flex-row bg-gray-500 py-1 px-2 rounded-lg gap-x-2 items-center justify-center">
                     <IoSettings size={21} />
                     <span>Settings</span>
-                </div>
+                </div> */}
                 <TemporaryDrawer />
             </div>
         </header>

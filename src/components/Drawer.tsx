@@ -164,7 +164,7 @@ export default function TemporaryDrawer() {
                 ))}
             </List>
             <Divider style={{ backgroundColor: "#4b5563" }} />
-            <List>
+            {/* <List>
                 {[
                     { text: "Docs", icon: <IoDocumentSharp color="white" /> },
                     { text: "Settings", icon: <IoMdSettings color="white" /> }
@@ -176,7 +176,7 @@ export default function TemporaryDrawer() {
                         </ListItemButton>
                     </ListItem>
                 ))}
-            </List>
+            </List> */}
         </Box>
     );
 
