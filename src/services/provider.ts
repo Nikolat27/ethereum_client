@@ -12,12 +12,10 @@ import {
 // Initialize RPC URL
 const getInitialRpcUrl = (): string => {
     const savedUrl = localStorage.getItem("rpcUrl");
-    const envUrl = import.meta.env.VITE_RPC_URL;
 
     if (savedUrl) return savedUrl;
-    if (envUrl) return envUrl;
 
-    console.warn("No RPC URL found. Using default localhost.");
+    // No RPC URL configured - user must set one manually
     return "http://localhost:8545";
 };
 

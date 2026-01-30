@@ -2,7 +2,7 @@ import { Modal, Box, Button } from "@mui/material";
 import { IoClipboardSharp } from "react-icons/io5";
 import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import ConfirmCloseModal from "./ConfirmCloseModal";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface GeneratedWalletModalProps {
     open: boolean;
@@ -47,14 +47,6 @@ function GeneratedWalletModal({
     onResetVisibility,
 }: GeneratedWalletModalProps) {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-    // Debug logging for props
-    useEffect(() => {
-        console.log('GeneratedWalletModal props updated:');
-        console.log('- showPrivateKey:', showPrivateKey);
-        console.log('- showMnemonic:', showMnemonic);
-        console.log('- open:', open);
-    }, [showPrivateKey, showMnemonic, open]);
 
     const handleCloseAttempt = () => {
         console.log('Close attempt triggered');
