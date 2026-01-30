@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FaCode, FaCopy, FaFileCode } from "react-icons/fa";
-import { ethers } from "ethers";
 import toast, { Toaster } from "react-hot-toast";
 
 function BytecodeAnalyzer() {

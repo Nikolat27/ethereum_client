@@ -1,6 +1,5 @@
 import { FaEthereum } from "react-icons/fa6";
-import { IoDocumentSharp } from "react-icons/io5";
-import { IoSettings, IoRefresh } from "react-icons/io5";
+import { IoRefresh } from "react-icons/io5";
 import { useState, useEffect } from "react";
 import TemporaryDrawer from "./Drawer";
 import { ethService } from "../services/provider";
@@ -8,20 +7,6 @@ import { ethService } from "../services/provider";
 function Header() {
     const [networkName, setNetworkName] = useState<string>("Checking...");
     const [isConnected, setIsConnected] = useState<boolean>(false);
-
-    // Initialize and listen for changes
-    useEffect(() => {
-        updateNetworkStatus();
-
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === "rpcUrl") {
-                updateNetworkStatus();
-            }
-        };
-
-        window.addEventListener("storage", handleStorageChange);
-        return () => window.removeEventListener("storage", handleStorageChange);
-    }, []);
 
     // Update network status
     const updateNetworkStatus = async () => {
@@ -53,6 +38,20 @@ function Header() {
             setIsConnected(false);
         }
     };
+
+    // Initialize and listen for changes
+    useEffect(() => {
+        updateNetworkStatus();
+
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === "rpcUrl") {
+                updateNetworkStatus();
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, []);
 
     return (
         <header className="flex flex-row w-full h-14 bg-[#1f2937] sticky px-2 sm:px-4 mx-auto top-0 border-b border-gray-700 items-center gap-x-2 sm:gap-x-4 justify-start z-50">

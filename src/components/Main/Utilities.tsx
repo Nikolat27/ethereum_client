@@ -18,34 +18,40 @@ function Utilities() {
     const [privateKey, setPrivateKey] = useState<string>("");
     const [convertedAddress, setConvertedAddress] = useState<string>("");
 
-    // Reactive unit conversion
-    useEffect(() => {
-        if (!lastChanged) return;
+    // Calculate derived values
+    const calculateValues = () => {
+        if (!lastChanged) return { gwei: "", ether: "" };
 
         try {
             if (lastChanged === "wei" && wei) {
                 const weiValue = BigInt(wei);
                 const gweiValue = Number(weiValue) / 1e9;
                 const etherValue = Number(weiValue) / 1e18;
-                setGwei(gweiValue.toString());
-                setEther(etherValue.toString());
+                return { gwei: gweiValue.toString(), ether: etherValue.toString() };
             } else if (lastChanged === "gwei" && gwei) {
                 const gweiValue = parseFloat(gwei);
                 const weiValue = BigInt(Math.floor(gweiValue * 1e9));
                 const etherValue = gweiValue / 1e9;
-                setWei(weiValue.toString());
-                setEther(etherValue.toString());
+                return { wei: weiValue.toString(), ether: etherValue.toString() };
             } else if (lastChanged === "ether" && ether) {
                 const etherValue = parseFloat(ether);
                 const weiValue = BigInt(Math.floor(etherValue * 1e18));
                 const gweiValue = etherValue * 1e9;
-                setWei(weiValue.toString());
-                setGwei(gweiValue.toString());
+                return { wei: weiValue.toString(), gwei: gweiValue.toString() };
             }
-        } catch (error) {
+        } catch (_error) {
             // Invalid input, ignore
         }
-    }, [wei, gwei, ether, lastChanged]);
+        return {};
+    };
+
+    const derivedValues = calculateValues();
+
+    useEffect(() => {
+        if (derivedValues.gwei !== undefined) setGwei(derivedValues.gwei);
+        if (derivedValues.ether !== undefined) setEther(derivedValues.ether);
+        if (derivedValues.wei !== undefined) setWei(derivedValues.wei);
+    }, [derivedValues]);
 
     const handleWeiChange = (value: string) => {
         setWei(value);

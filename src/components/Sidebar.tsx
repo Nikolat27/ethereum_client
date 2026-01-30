@@ -43,7 +43,7 @@ function Sidebar() {
                     duration: 1500,
                     position: "top-right",
                 });
-            } catch (error) {
+            } catch (_error) {
                 toast.error("Failed to copy address", {
                     duration: 2000,
                     position: "top-right",
@@ -73,8 +73,8 @@ function Sidebar() {
                 duration: 1500,
                 position: "top-right",
             });
-        } catch (error) {
-            console.error("Failed to refresh balance:", error);
+        } catch (_error) {
+            console.error("Failed to refresh balance");
             toast.error("Failed to refresh balance", {
                 duration: 2000,
                 position: "top-right",

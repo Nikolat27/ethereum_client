@@ -6,8 +6,6 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { IoDocumentSharp } from "react-icons/io5";
-import { IoMdSettings } from "react-icons/io";
 import { HiOutlineMenu } from "react-icons/hi";
 import { Divider } from "@mui/material";
 import { FaNetworkWired, FaWallet, FaFileContract } from "react-icons/fa";
@@ -84,7 +82,7 @@ export default function TemporaryDrawer() {
                 position: "top-right",
             });
         } catch (error) {
-            console.error("Failed to refresh balance:", error);
+            console.error("Failed to refresh balance");
             toast.error("Failed to refresh balance", {
                 duration: 2000,
                 position: "top-right",

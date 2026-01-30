@@ -110,7 +110,7 @@ function GeneratedWalletModal({
         <>
             <Modal
                 open={open}
-                onClose={(event, reason) => {
+                onClose={(_, reason) => {
                     console.log('Modal onClose called with reason:', reason);
                     if (reason === 'backdropClick') {
                         handleCloseAttempt();

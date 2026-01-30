@@ -141,7 +141,7 @@ export default function TransactionConfirmModal({
                         )}
 
                         {/* Total Cost Highlight */}
-                        <div className="flex flex-col gap-2 p-4 bg-gradient-to-r from-[#111827] to-[#1f2937] rounded-lg border-2 border-[#3B82F6]">
+                        <div className="flex flex-col gap-2 p-4 bg-linear-to-r from-[#111827] to-[#1f2937] rounded-lg border-2 border-[#3B82F6]">
                             <span className="text-gray-300 text-sm font-medium">Total Cost</span>
                             <span className="text-[#3B82F6] text-xl font-bold">
                                 {transactionDetails.totalCost} ETH

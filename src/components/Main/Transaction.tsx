@@ -182,7 +182,7 @@ function TransactionBuilder() {
             // Check if network supports EIP-1559
             const feeData = await ethService.getFeeData();
 
-            let tx: any = {
+            const tx: any = {
                 to,
                 value: parseEther(txValue),
                 gasLimit: BigInt(gasLimit),

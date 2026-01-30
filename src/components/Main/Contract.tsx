@@ -184,7 +184,7 @@ function ContractInteraction() {
                 if (typeof result === "object" && result !== null) {
                     formattedResult = JSON.stringify(
                         result,
-                        (key, value) => (typeof value === "bigint" ? value.toString() : value),
+                        (_, value) => (typeof value === "bigint" ? value.toString() : value),
                         2
                     );
                 } else if (typeof result === "bigint") {
