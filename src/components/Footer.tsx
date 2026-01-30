@@ -14,6 +14,21 @@ function Footer() {
 
                     <div className="flex items-center gap-4">
                         <span className="text-gray-400 text-sm">
+                            Source code:
+                        </span>
+                        <a
+                            href="https://github.com/nikolat27/ethereum_client"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition-colors duration-200 group"
+                        >
+                            <FaGithub className="text-lg group-hover:scale-110 transition-transform" />
+                            <span className="font-mono">ethereum_client</span>
+                        </a>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <span className="text-gray-400 text-sm">
                             Made by
                         </span>
                         <a
@@ -29,7 +44,7 @@ function Footer() {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 }
 
