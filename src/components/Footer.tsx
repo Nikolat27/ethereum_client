@@ -1,21 +1,12 @@
-import { FaGithub, FaCode, FaEthereum } from "react-icons/fa";
+import { FaGithub, FaEthereum } from "react-icons/fa";
 
 function Footer() {
     return (
         <footer className="w-full py-6 px-4 bg-[#111827] border-t border-gray-700">
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <FaCode className="text-blue-400 text-xl" />
-                        <span className="text-gray-300 font-medium">
-                            Built with ❤️
-                        </span>
-                    </div>
-
                     <div className="flex items-center gap-4">
-                        <span className="text-gray-400 text-sm">
-                            Source code:
-                        </span>
+                        <span className="text-gray-400 text-sm">Source code:</span>
                         <a
                             href="https://github.com/nikolat27/ethereum_client"
                             target="_blank"
@@ -28,9 +19,7 @@ function Footer() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <span className="text-gray-400 text-sm">
-                            Made by
-                        </span>
+                        <span className="text-gray-400 text-sm">Made by</span>
                         <a
                             href="https://github.com/nikolat27"
                             target="_blank"
@@ -44,7 +33,7 @@ function Footer() {
                     </div>
                 </div>
             </div>
-        </footer >
+        </footer>
     );
 }
 
